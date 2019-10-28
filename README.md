@@ -1,68 +1,182 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React Introduction
 
-## Available Scripts
+### Specification
 
-In the project directory, you can run:
+- Display list of 100 repositories from github
+- Single repository should contain a description and name
+- Owner of the repository should be displayed with avatar and login
+- Display ...Loading when request is processing
 
-### `yarn start`
+### Mock
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+![Mock](Workshops/Mock.png?raw=true "Title")
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
-### `yarn test`
+### What we need
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+https://codesandbox.io/
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+###Rules
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+- No need to understand CSS (everything will be provided :D)
+- We make is as simple as possible, without sophisticated syntax
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Let's go !
 
-### `yarn eject`
+We go through 'Think in React' advise step by step.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+[Thinking in React](https://reactjs.org/docs/thinking-in-react.html)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Step 1: Break The UI Into A Component Hierarchy 
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+In that step we define and draw on the board hierarchy of the component
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+#### Step 2: Build A Static Version in React 
 
-## Learn More
+Now we move to codesandox and create couple of components.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Mock data for static version:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```json
+[
+  {
+    "id": 1,
+    "name": "mojombo/grit",
+    "description": "**Grit is no longer maintained. Check out libgit2/rugged.** Grit gives you object oriented read/write access to Git repositories via Ruby.",
+    "owner": {
+      "avatar": "https://avatars0.githubusercontent.com/u/1?v=4",
+      "login": "mojombo"
+    }
+  },
+  {
+    "id": 26,
+    "name": "wycats/merb-core",
+    "description": "Merb Core: All you need. None you don't.",
+    "owner": {
+      "avatar": "https://avatars0.githubusercontent.com/u/4?v=4",
+      "login": "wycats"
+    }
+  }
+]
+```
 
-### Code Splitting
+**styles.css**
+```css
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #92b1d0;
+}
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+**Owner.css**
 
-### Analyzing the Bundle Size
+```css
+.Owner {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  background: #23374D;
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+.OwnerImage {
+  width: 75px;
+  border-radius: 50%;
+  flex: 0 0 80%;
+  padding: 5px;
+}
 
-### Making a Progressive Web App
+.OwnerLogin {
+  text-transform: uppercase;
+  color: white;
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+```
 
-### Advanced Configuration
+**Repository.css**
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+```css
 
-### Deployment
+.RepositoryContainer {
+  display: flex;
+  flex-direction: row;
+  border: 2px solid #23374D;
+  width: 75vw;
+  margin:  20px;
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+.RepositoryInformation {
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+}
 
-### `yarn build` fails to minify
+.RepositoryDescription {
+  padding: 10px 20px;
+  flex: 0 0 75%;
+  border-top: 1px solid #23374D;
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+.RepositoryName {
+  padding: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  flex: 0 0 25%;
+  background: #d4cdcd;
+  text-align: center;
+}
+```
+
+**RepositoryList.css**
+
+```css
+.RepositoryList {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+```
+
+#### Step 3: Identify The Minimal (but complete) Representation Of UI State 
+
+    1. Is it passed in from a parent via props? If so, it probably isn’t state.
+    2. Does it remain unchanged over time? If so, it probably isn’t state.
+    3. Can you compute it based on any other state or props in your component? If so, it isn’t state.
+
+### Step 4: Identify Where Your State Should Live
+
+We need to fetch data from API and display it on the screen.
+The best way in web to make HTTP request is to used [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+
+We need to think where is the best place to send a request ? Any suggestions ?
+
+**fetch logic**
+
+```javascript
+  const fetchRepositories =  async() => {
+    const response = await fetch('https://api.github.com/repositories');
+    const data = await response.json();
+    return data.map(({id, full_name: name, description, owner: { login, avatar_url: avatar }}) => ({
+      id,
+      name,
+      description,
+      owner: {
+        avatar,
+        login
+      }
+    }));
+  };
+```
+
+### Step 5: Add Inverse Data Flow 
+
+We don't need this

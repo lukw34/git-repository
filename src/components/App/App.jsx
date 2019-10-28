@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App/App.css';
-import RepositoryList from "./Repository List/RepositoryList";
+import RepositoryList from "../RepositoryList/RepositoryList";
 
 function App() {
   const [isLoading, setLoading] =  useState(false);
@@ -27,7 +26,7 @@ function App() {
     }, []);
 
   return (
-    <div className="App">
+    <div>
       {isLoading ? <div>...Loading</div> : <RepositoryList repositories={repositories} />}
     </div>
   );
