@@ -1,35 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import RepositoryList from "../RepositoryList/RepositoryList";
+import fetchGitRepositories from "../../api/fetchGitRepositories";
 
-function App() {
-  const [isLoading, setLoading] =  useState(false);
-  const [repositories, setRepositories] = useState([]);
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false,
+            repositories: [],
+            error: null
+        }
+    }
 
-  const fetchRepositories =  async() => {
-    setLoading(true);
-    const response = await fetch('https://api.github.com/repositories');
-    const data = await response.json();
-    setRepositories(data.map(({id, full_name: name, description, owner: { login, avatar_url: avatar }}) => ({
-      id,
-      name,
-      description,
-      owner: {
-        avatar,
-        login
-      }
-    })));
-    setLoading(false)
-  };
+    fetchRepositories = async () => {
+        this.setState({
+            isLoading: true
+        });
 
-  useEffect(() => {
-      fetchRepositories();
-    }, []);
+        try {
+            const repositories = await fetchGitRepositories();
+            this.setState({
+                isLoading: false,
+                repositories,
+                error: null
+            })
+        } catch (e) {
+            this.setState({
+                error: 'Data fetching error',
+                isLoading: false
+            })
+        }
 
-  return (
-    <div>
-      {isLoading ? <div>...Loading</div> : <RepositoryList repositories={repositories} />}
-    </div>
-  );
+    };
+
+    componentDidMount() {
+        this.fetchRepositories();
+    }
+
+    render() {
+        const {isLoading, repositories, error} = this.state;
+        return error ? (<div>{error}</div>) : (
+            <div>
+                {isLoading ? <div>...Loading</div> : <RepositoryList repositories={repositories}/>}
+            </div>
+        )
+    }
 }
 
 export default App;
